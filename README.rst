@@ -1,22 +1,5 @@
-This is Python version 3.8.13
+This is NOT Only Python
 =============================
-
-.. image:: https://travis-ci.org/python/cpython.svg?branch=3.8
-   :alt: CPython build status on Travis CI
-   :target: https://travis-ci.org/python/cpython/branches
-
-.. image:: https://dev.azure.com/python/cpython/_apis/build/status/Azure%20Pipelines%20CI?branchName=3.8
-   :alt: CPython build status on Azure DevOps
-   :target: https://dev.azure.com/python/cpython/_build/latest?definitionId=4&branchName=3.8
-
-.. image:: https://codecov.io/gh/python/cpython/branch/3.8/graph/badge.svg
-   :alt: CPython code coverage on Codecov
-   :target: https://codecov.io/gh/python/cpython/branch/3.8
-
-.. image:: https://img.shields.io/badge/discourse-join_chat-brightgreen.svg
-   :alt: Python Discourse chat
-   :target: https://discuss.python.org/
-
 
 Copyright (c) 2001-2022 Python Software Foundation.  All rights reserved.
 
@@ -29,17 +12,8 @@ General Information
 
 - Website: https://www.python.org
 - Source code: https://github.com/python/cpython
-- Issue tracker: https://bugs.python.org
 - Documentation: https://docs.python.org
 - Developer's Guide: https://devguide.python.org/
-
-Contributing to CPython
------------------------
-
-For more complete instructions on contributing to CPython development,
-see the `Developer Guide`_.
-
-.. _Developer Guide: https://devguide.python.org/
 
 Using Python
 ------------
@@ -133,42 +107,17 @@ arbitrary ``.o`` file boundary when building final executables or shared
 libraries for additional performance gains.
 
 
-What's New
-----------
-
-We have a comprehensive overview of the changes in the `What's New in Python
-3.8 <https://docs.python.org/3.8/whatsnew/3.8.html>`_ document.  For a more
-detailed change log, read `Misc/NEWS
-<https://github.com/python/cpython/blob/3.8/Misc/NEWS.d>`_, but a full
-accounting of changes can only be gleaned from the `commit history
-<https://github.com/python/cpython/commits/3.8>`_.
-
-If you want to install multiple versions of Python, see the section below
-entitled "Installing multiple versions".
-
-
 Documentation
 -------------
 
 `Documentation for Python 3.8 <https://docs.python.org/3.8/>`_ is online,
 updated daily.
 
-It can also be downloaded in many formats for faster access.  The documentation
-is downloadable in HTML, PDF, and reStructuredText formats; the latter version
-is primarily for documentation authors, translators, and people with special
-formatting requirements.
-
 For information about building Python's documentation, refer to `Doc/README.rst
 <https://github.com/python/cpython/blob/3.8/Doc/README.rst>`_.
 
-
-Converting From Python 2.x to 3.x
----------------------------------
-
-Significant backward incompatible changes were made for the release of Python
-3.0, which may cause programs written for Python 2 to fail when run with Python
-3.  For more information about porting your code from Python 2 to Python 3, see
-the `Porting HOWTO <https://docs.python.org/3/howto/pyporting.html>`_.
+Documentation of any changes made from standard Python 3.8 will be made available
+when said changes are functional.
 
 
 Testing
@@ -195,6 +144,7 @@ include relevant output from that command to show the issue.
 See `Running & Writing Tests <https://devguide.python.org/runtests/>`_
 for more on running tests.
 
+
 Installing multiple versions
 ----------------------------
 
@@ -212,35 +162,6 @@ install``.  Install all other versions using ``make altinstall``.
 For example, if you want to install Python 2.7, 3.6, and 3.8 with 3.8 being the
 primary version, you would execute ``make install`` in your 3.8 build directory
 and ``make altinstall`` in the others.
-
-
-Issue Tracker and Mailing List
-------------------------------
-
-Bug reports are welcome!  You can use the `issue tracker
-<https://bugs.python.org>`_ to report bugs, and/or submit pull requests `on
-GitHub <https://github.com/python/cpython>`_.
-
-You can also follow development discussion on the `python-dev mailing list
-<https://mail.python.org/mailman/listinfo/python-dev/>`_.
-
-
-Proposals for enhancement
--------------------------
-
-If you have a proposal to change Python, you may want to send an email to the
-comp.lang.python or `python-ideas`_ mailing lists for initial feedback.  A
-Python Enhancement Proposal (PEP) may be submitted if your idea gains ground.
-All current PEPs, as well as guidelines for submitting a new PEP, are listed at
-`python.org/dev/peps/ <https://www.python.org/dev/peps/>`_.
-
-.. _python-ideas: https://mail.python.org/mailman/listinfo/python-ideas/
-
-
-Release Schedule
-----------------
-
-See :pep:`569` for Python 3.8 release details.
 
 
 Copyright and License Information
