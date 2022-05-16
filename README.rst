@@ -15,13 +15,6 @@ General Information
 - Documentation: https://docs.python.org
 - Developer's Guide: https://devguide.python.org/
 
-Using Python
-------------
-
-Installable Python kits, and information about using Python, are available at
-`python.org`_.
-
-.. _python.org: https://www.python.org/
 
 Build Instructions
 ------------------
