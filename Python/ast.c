@@ -3991,32 +3991,9 @@ get_last_end_pos(asdl_seq *s, int *end_lineno, int *end_col_offset)
 }
 
 static stmt_ty
-ast_for_if_stmt(struct compiling *c, const node *n)
+utility_else_handler(struct compiling *c, const node *n, int *end_lineno, int *end_col_offset, asdl_seq *seq1, asdl_seq *seq2, char *name, size_t name_length)
 {
-    /* if_stmt: 'if' test ':' suite ('elif' test ':' suite)*
-       ['else' ':' suite]
-    */
     char *s;
-    int end_lineno, end_col_offset;
-
-    REQ(n, if_stmt);
-
-    if (NCH(n) == 4) {
-        expr_ty expression;
-        asdl_seq *suite_seq;
-
-        expression = ast_for_expr(c, CHILD(n, 1));
-        if (!expression)
-            return NULL;
-        suite_seq = ast_for_suite(c, CHILD(n, 3));
-        if (!suite_seq)
-            return NULL;
-        get_last_end_pos(suite_seq, &end_lineno, &end_col_offset);
-
-        return If(expression, suite_seq, NULL, LINENO(n), n->n_col_offset,
-                  end_lineno, end_col_offset, c->c_arena);
-    }
-
     s = STR(CHILD(n, 4));
     /* s[2], the third character in the string, will be
        's' for el_s_e, or
@@ -4024,27 +4001,23 @@ ast_for_if_stmt(struct compiling *c, const node *n)
     */
     if (s[2] == 's') {
         expr_ty expression;
-        asdl_seq *seq1, *seq2;
-
         expression = ast_for_expr(c, CHILD(n, 1));
         if (!expression)
             return NULL;
-        seq1 = ast_for_suite(c, CHILD(n, 3));
+        *seq1 = ast_for_suite(c, CHILD(n, 3));
         if (!seq1)
             return NULL;
-        seq2 = ast_for_suite(c, CHILD(n, 6));
+        *seq2 = ast_for_suite(c, CHILD(n, 6));
         if (!seq2)
             return NULL;
         get_last_end_pos(seq2, &end_lineno, &end_col_offset);
-
-        return If(expression, seq1, seq2, LINENO(n), n->n_col_offset,
-                  end_lineno, end_col_offset, c->c_arena);
+        return expression;
     }
     else if (s[2] == 'i') {
         int i, n_elif, has_else = 0;
         expr_ty expression;
-        asdl_seq *suite_seq;
-        asdl_seq *orelse = NULL;
+        asdl_seq *suite_seq = seq1
+        asdl_seq *orelse = seq2;
         n_elif = NCH(n) - 4;
         /* must reference the child n_elif+1 since 'else' token is third,
            not fourth, child from the end. */
@@ -4112,22 +4085,25 @@ ast_for_if_stmt(struct compiling *c, const node *n)
         if (!suite_seq)
             return NULL;
         get_last_end_pos(orelse, &end_lineno, &end_col_offset);
-        return If(expression, suite_seq, orelse,
-                  LINENO(n), n->n_col_offset,
-                  end_lineno, end_col_offset, c->c_arena);
+        return expression;
     }
-
+    char buffer[36+name_length] = "";
+    strcat(strcat(strcat(buffer, "unexpected token in '"), name), "' statement: %s");
     PyErr_Format(PyExc_SystemError,
-                 "unexpected token in 'if' statement: %s", s);
+                 buffer, s);
     return NULL;
 }
 
 static stmt_ty
-ast_for_while_stmt(struct compiling *c, const node *n)
+ast_for_if_stmt(struct compiling *c, const node *n)
 {
-    /* while_stmt: 'while' test ':' suite ['else' ':' suite] */
-    REQ(n, while_stmt);
+    /* if_stmt: 'if' test ':' suite ('elif' test ':' suite)*
+       ['else' ':' suite]
+    */
+    char *s;
     int end_lineno, end_col_offset;
+
+    REQ(n, if_stmt);
 
     if (NCH(n) == 4) {
         expr_ty expression;
@@ -4140,32 +4116,35 @@ ast_for_while_stmt(struct compiling *c, const node *n)
         if (!suite_seq)
             return NULL;
         get_last_end_pos(suite_seq, &end_lineno, &end_col_offset);
-        return While(expression, suite_seq, NULL, LINENO(n), n->n_col_offset,
-                     end_lineno, end_col_offset, c->c_arena);
-    }
-    else if (NCH(n) == 7) {
-        expr_ty expression;
-        asdl_seq *seq1, *seq2;
 
-        expression = ast_for_expr(c, CHILD(n, 1));
-        if (!expression)
-            return NULL;
-        seq1 = ast_for_suite(c, CHILD(n, 3));
-        if (!seq1)
-            return NULL;
-        seq2 = ast_for_suite(c, CHILD(n, 6));
-        if (!seq2)
-            return NULL;
-        get_last_end_pos(seq2, &end_lineno, &end_col_offset);
-
-        return While(expression, seq1, seq2, LINENO(n), n->n_col_offset,
-                     end_lineno, end_col_offset, c->c_arena);
+        return If(expression, suite_seq, NULL, LINENO(n), n->n_col_offset,
+                  end_lineno, end_col_offset, c->c_arena);
     }
 
-    PyErr_Format(PyExc_SystemError,
-                 "wrong number of tokens for 'while' statement: %d",
-                 NCH(n));
-    return NULL;
+    expr_ty expression;
+    asdl_seq seq1, seq2;
+    expr_ty expression = utility_else_handler(&c, &n, &end_lineno, &end_col_offset, &seq1, &seq2, "if");
+    if (!seq2)
+        return NULL;
+    return If(expression, seq1, seq2, LINENO(n), n->n_col_offset,
+              end_lineno, end_col_offset, c->c_arena);
+}
+
+static stmt_ty
+ast_for_while_stmt(struct compiling *c, const node *n)
+{
+    /* while_stmt: 'while' test ':' suite ('elif' test ':' suite)*
+       ['else' ':' suite]
+    */
+    REQ(n, while_stmt);
+    int end_lineno, end_col_offset;
+    expr_ty expression;
+    asdl_seq seq1, seq2;
+    expr_ty expression = utility_else_handler(&c, &n, &end_lineno, &end_col_offset, &seq1, &seq2, "while");
+    if (!seq2)
+        return NULL;
+    return While(expression, seq1, seq2, LINENO(n), n->n_col_offset,
+                 end_lineno, end_col_offset, c->c_arena);
 }
 
 static stmt_ty
